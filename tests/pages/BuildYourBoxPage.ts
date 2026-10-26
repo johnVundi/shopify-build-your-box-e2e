@@ -3,6 +3,10 @@ import { BYB } from './selectors';
 
 export const MAX_PIECES = 6;
 
+const escapeRe = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/** Match option labels that begin with the query, so "Amaretto" never picks "Dark Chocolate Amaretto". */
+const startsWith = (q: string) => new RegExp(`^\\s*${escapeRe(q)}`, 'i');
+
 /** Shopify AJAX cart shape (subset we assert on). */
 export interface ShopifyCart {
   item_count: number;
@@ -23,6 +27,8 @@ export class BuildYourBoxPage {
   readonly subtotal: Locator;
   readonly savings: Locator;
   readonly counter: Locator;
+  readonly progress: Locator;
+  readonly total: Locator;
   readonly addToCartButton: Locator;
   readonly clearAllButton: Locator;
 
@@ -31,13 +37,15 @@ export class BuildYourBoxPage {
     this.subtotal = page.locator(BYB.subtotal);
     this.savings = page.locator(BYB.savings);
     this.counter = page.locator(BYB.counter);
+    this.progress = page.locator(BYB.progress);
+    this.total = page.locator(BYB.total);
     this.addToCartButton = page.locator(BYB.addToCart).first();
     this.clearAllButton = page.locator(BYB.clearAll).first();
   }
 
   /** Open the page, optionally on an unpublished preview theme. */
   async goto(): Promise<void> {
-    const path = process.env.BYB_PATH ?? '/pages/build-your-box';
+    const path = process.env.BYB_PATH || '/pages/build-your-box';
     const theme = process.env.PREVIEW_THEME_ID;
     await this.page.goto(theme ? `${path}?preview_theme_id=${theme}` : path);
     await expect(this.slots.first()).toBeVisible();
@@ -47,24 +55,20 @@ export class BuildYourBoxPage {
     return this.slots.nth(index);
   }
 
-  /** Type into a slot's search and pick the first matching option. Returns the chosen label. */
+  /**
+   * Type into a field's search box and pick the first matching visible option.
+   * Returns the flavour label without the price, e.g. "Amaretto – ½ lb".
+   */
   async choose(index: number, query: string): Promise<string> {
     const slot = this.slot(index);
-    const input = slot.locator(BYB.slotInput).first();
-    const tag = await input.evaluate((el) => el.tagName.toLowerCase());
-
-    if (tag === 'select') {
-      const label = await input.locator('option', { hasText: new RegExp(query, 'i') }).first().innerText();
-      await input.selectOption({ label });
-      return label.trim();
-    }
-
+    const input = slot.locator(BYB.slotInput);
     await input.click();
     await input.fill(query);
-    const option = this.page.locator(BYB.option).filter({ hasText: new RegExp(query, 'i') }).first();
+    const option = slot.locator(BYB.option).filter({ hasText: startsWith(query) }).first();
     await expect(option).toBeVisible();
-    const label = (await option.innerText()).trim();
+    const label = (await option.innerText()).split('·')[0].trim();
     await option.click();
+    await expect(input).toHaveValue(label);
     return label;
   }
 
@@ -78,6 +82,14 @@ export class BuildYourBoxPage {
 
   async subtotalCents(): Promise<number> {
     return toCents(await this.subtotal.innerText());
+  }
+
+  async savingsCents(): Promise<number> {
+    return toCents(await this.savings.innerText());
+  }
+
+  async totalCents(): Promise<number> {
+    return toCents(await this.total.innerText());
   }
 
   async addToCart(): Promise<void> {

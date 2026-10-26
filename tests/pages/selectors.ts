@@ -1,29 +1,32 @@
 /**
  * Single source of truth for every locator the suite uses.
+ * Mapped from the live theme (touchoffudge.com/pages/build-your-box, <tof-box> section).
+ * The theme exposes stable data-* hooks, so the suite relies on those, not on styling classes.
  *
- * Before the first run, confirm each entry against the live theme:
- *   npx playwright codegen "$BASE_URL$BYB_PATH"
- * Prefer data-testid attributes if you can add them to the theme;
- * otherwise use accessible roles and names (what a user actually sees).
+ * If the theme changes, re-check with:
+ *   npx playwright codegen "https://touchoffudge.com/pages/build-your-box"
  */
 export const BYB = {
-  /** Each of the six flavour slots (searchable select / combobox). */
-  slot: '[data-byb-slot], .byb-slot',
-  /** Search/select input inside a slot. */
-  slotInput: 'input[type="search"], input[role="combobox"], select',
-  /** Option entries shown after typing in a slot. */
-  option: '[role="option"], .byb-option',
-  /** Per-slot remove / clear control. */
-  slotClear: 'button[aria-label*="remove" i], button[aria-label*="clear" i], .byb-slot__clear',
-  /** Clear-all control for the whole box. */
-  clearAll: 'button:has-text("Clear"), .byb-clear-all',
-  /** Running subtotal and savings read-outs. */
-  subtotal: '[data-byb-subtotal], .byb-subtotal',
-  savings: '[data-byb-savings], .byb-savings',
-  /** Piece counter, e.g. "3 / 6". */
-  counter: '[data-byb-count], .byb-count',
-  /** Primary add-to-cart button. */
-  addToCart: 'button:has-text("Add to cart"), button:has-text("Add box to cart")',
+  /** Each of the six flavour fields: <div class="tof-box__field" data-field="0..5"> */
+  slot: '[data-selectors] [data-field]',
+  /** Searchable combobox inside a field. */
+  slotInput: 'input[data-slot]',
+  /** Opens the full flavour list for a field. */
+  slotToggle: 'button[data-toggle]',
+  /** Visible options in that field's listbox (all 6 listboxes exist in the DOM, hidden ones are skipped). */
+  option: '[role="option"]:visible',
+  /** Per-field "×" clear button (hidden until the field has a flavour). */
+  slotClear: 'button[data-clear]',
+  /** "Clear all flavors" */
+  clearAll: 'button[data-reset]',
+  /** Review panel read-outs. */
+  counter: '[data-selection-count]', // "3 pieces selected"
+  progress: '[data-progress]', // offer progress message
+  subtotal: '[data-subtotal]', // Selected pieces subtotal
+  savings: '[data-savings]', // Estimated cart savings
+  total: '[data-total]', // Estimated cart total
+  /** Primary button: "Choose a flavor to begin" (disabled) → "Add N pieces to cart". */
+  addToCart: 'button[data-add]',
 } as const;
 
 export const HOME = {

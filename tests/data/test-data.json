@@ -1,6 +1,7 @@
 {
-  "_note": "Confirm flavour names against the live catalogue before the first run. Queries only need to match part of the option label.",
-  "flavours": ["Chocolate", "Peanut Butter", "Vanilla", "Maple", "Caramel", "Cookies"],
-  "expectedFullBoxSavingsCents": null,
-  "criticalUrls": ["/", "/collections/bundles", "/blogs/news/fudge-vs-chocolate"]
+  "_note": "Flavours confirmed against the live catalogue (220 options, all $12.00 per ½ lb at time of writing). Queries match the start of the option label.",
+  "flavours": ["Amaretto", "Butterscotch", "Cinnamon Roll", "Coconut", "Black Cherry", "Caramel Apple"],
+  "unitPriceCents": 1200,
+  "expectedFullBoxSavingsCents": 1200,
+  "criticalUrls": ["/", "/pages/build-your-box", "/collections/bundles", "/blogs/news/fudge-vs-chocolate"]
 }

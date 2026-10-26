@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 
-const BASE_URL = process.env.BASE_URL ?? 'https://your-store.myshopify.com';
+const BASE_URL = process.env.BASE_URL || 'https://touchoffudge.com';
 
 export default defineConfig({
   testDir: './tests',

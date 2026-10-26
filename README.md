@@ -8,10 +8,10 @@ The configurator lets shoppers build a box of one to six fudge pieces from six s
 
 | Area | Cases | How |
 |---|---|---|
-| Configurator rules | TC-01 – TC-08 | UI assertions via a page object |
-| Cart handoff | TC-09 | Verified against Shopify's `/cart.js` API, not just the UI |
-| Mobile entry point | TC-10 | Pixel 7 and iPhone 14 device profiles |
-| SEO / broken links | TC-11 | HTTP status checks on critical URLs |
+| Configurator rules and pricing | TC-01 – TC-10 | UI assertions via a page object, incl. the buy-6-pay-for-5 offer |
+| Cart handoff | TC-11 | Verified against Shopify's `/cart.js` API, not just the UI |
+| Mobile entry point | TC-12 | Pixel 7 and iPhone 14 device profiles |
+| SEO / broken links | TC-13 | HTTP status checks on critical URLs |
 | Price parsing | TC-U | Pure unit tests, no browser needed |
 
 Full details: [Test Plan](docs/TEST_PLAN.md) · [Test Cases](docs/TEST_CASES.md) · [Bug template](docs/BUG_REPORT_TEMPLATE.md)
@@ -35,8 +35,8 @@ npm run test:mobile         # mobile only
 npm run report              # open the HTML report
 ```
 
-### First run on a new theme
-Confirm locators with `npm run codegen -- "$BASE_URL$BYB_PATH"`, update `tests/pages/selectors.ts`, and check the flavour names in `tests/data/test-data.json`.
+### Locators
+The theme exposes stable `data-*` hooks (`data-field`, `data-slot`, `data-subtotal`, `data-add`…), and all of them are mapped in `tests/pages/selectors.ts`. If the theme changes, re-check with `npm run codegen -- "https://touchoffudge.com/pages/build-your-box"`.
 
 ## Project structure
 
