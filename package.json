@@ -1,0 +1,21 @@
+{
+  "name": "shopify-build-your-box-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "End-to-end QA suite (Playwright + TypeScript) for a Shopify 'Build Your Box' product configurator",
+  "scripts": {
+    "test": "playwright test",
+    "test:desktop": "playwright test --project=desktop-chrome",
+    "test:mobile": "playwright test --project=mobile-safari --project=mobile-chrome",
+    "test:headed": "playwright test --headed --project=desktop-chrome",
+    "report": "playwright show-report",
+    "codegen": "playwright codegen",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.5.0"
+  }
+}

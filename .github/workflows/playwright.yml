@@ -1,0 +1,22 @@
+name: E2E tests
+on:
+  workflow_dispatch: # manual only: this suite touches a real store
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      BYB_PATH: ${{ secrets.BYB_PATH }}
+      PREVIEW_THEME_ID: ${{ secrets.PREVIEW_THEME_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npm run typecheck
+      - run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: playwright-report, path: playwright-report/, retention-days: 14 }
